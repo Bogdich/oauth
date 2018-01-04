@@ -18,7 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  * @author Eugene Bogdevich
  */
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     /**
      * Used by the default implementation of {@link #authenticationManager()} to attempt
@@ -67,11 +67,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()   //creating user in memory
                 .withUser("user")
-                    .password("user")
+                    .password("password")
                         .roles("USER")
                 .and()
                 .withUser("admin")
-                    .password("admin")
+                    .password("password")
                         .authorities("ROLE_ADMIN");
     }
 
@@ -115,6 +115,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
         httpSecurity
                 .formLogin().disable()  //disable form authentication
                 .anonymous().disable()  //disable anonymous user
-                .authorizeRequests().anyRequest().denyAll();    //denying all access
+                .httpBasic().and()
+                .authorizeRequests().anyRequest().authenticated();    //restricting access only to authenticated users
     }
 }
